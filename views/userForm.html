@@ -38,6 +38,7 @@
         const ul = document.getElementById('users');
             ul.addEventListener('click', (event) => {
                 if (event.target.tagName === 'BUTTON') {
+                    console.log('clicked again')
                     const li = event.target.parentElement;
                     const userId = li.id;
                     deleteUser(userId);
@@ -61,12 +62,15 @@
 
     async function deleteUser(id) {
         try{
+            const ul = document.getElementById('users');
             console.log('clicked')
             const res = await fetch(`http://localhost:3000/delete-user/${id}`, { method: 'DELETE' })
             const data= await res.json()
             if (data.success) {
+                setTimeout(() => {
                 const li = document.getElementById(id);
-                li.remove();
+                ul.removeChild(li);
+            }, 0);
             }
         }catch(err){
             console.log(err)
