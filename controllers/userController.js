@@ -17,10 +17,30 @@ exports.postUser= async (req,res,next)=> {
             email: email,
             phone: phone
         })
-        res.status(201).json({newData: data})
+        res.redirect('/')
+        
     }
     catch(err){
         console.log(err)
+    }  
+}
+
+exports.getUserData= async(req,res,next)=>{
+    try{
+        const users= await User.findAll()
+        res.status(201).json({allUsers: users}).redirect('/')
+    }catch(err) {
+        console.log(err)
     }
-    
+}
+
+exports.deleteUserData = async(req,res,next)=>{
+    try{
+        const userId = req.params.userId;
+        await User.destroy({ where: { id: userId } });
+        const users = await User.findAll();
+        res.json({ allUsers: users });
+    }catch(err){
+        console.log(err)
+    }
 }

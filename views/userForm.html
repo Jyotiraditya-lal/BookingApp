@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book an appointment</title>
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/form.css">
+    <title>Book an appointment</title> 
+    <link rel="stylesheet" href="/form.css">
 </head>
 <body>
     <header class="main-header">
         <h1>Booking Appointment App</h1>
     </header>
     <main>
-        <form action="/" method="POST" >
+        <form action="/get-user" method="POST" >
             <div class="form-control">
                 <label>Name:</label>
                 <input type="text" name="title" />
@@ -23,6 +22,59 @@
                 <button type="submit">Book an appointment</button>
             </div>
         </form>
+        <ul id="users"></ul>
     </main>
+    <script>
+        window.addEventListener('DOMContentLoaded', async ()=>{
+    try{
+        const res= await fetch('http://localhost:3000/get-user')
+        const data= await res.json()
+        console.log(data)
+        if (data && data.allUsers) {
+            data.allUsers.forEach(user => {
+                showUser(user)
+            });
+        }
+        const ul = document.getElementById('users');
+            ul.addEventListener('click', (event) => {
+                if (event.target.tagName === 'BUTTON') {
+                    const li = event.target.parentElement;
+                    const userId = li.id;
+                    deleteUser(userId);
+                }
+            })
+    }catch(err){
+        console.log(err)
+    }
+
+    function showUser (user){
+        const ul = document.getElementById('users');
+        const bttn=document.createElement('button')
+        bttn.id= 'del'
+        bttn.textContent= 'Delete'
+        const li = document.createElement('li');
+        li.id=user.id
+        li.textContent = `${user.name}-${user.email}-${user.phone}`
+        li.appendChild(bttn)
+        ul.appendChild(li);
+    }
+
+    async function deleteUser(id) {
+        try{
+            console.log('clicked')
+            const res = await fetch(`http://localhost:3000/delete-user/${id}`, { method: 'DELETE' })
+            const data= await res.json()
+            if (data.success) {
+                const li = document.getElementById(id);
+                li.remove();
+            }
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    
+})
+    </script>
 </body>
 </html>
